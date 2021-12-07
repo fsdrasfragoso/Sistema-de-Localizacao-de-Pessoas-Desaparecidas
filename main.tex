@@ -1,0 +1,158 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%2345678901234567890123456789012345678901234567890123456789012345678901234567890
+%        1         2         3         4         5         6         7         8
+
+
+\documentclass[letterpaper, 10 pt, conference]{ieeeconf}  % Comment this line out
+                                                          % if you need a4paper
+%\documentclass[a4paper, 10pt, conference]{ieeeconf}      % Use this line for a4
+                                                          % paper
+
+\IEEEoverridecommandlockouts                              % This command is only
+                                                          % needed if you want to
+                                                          % use the \thanks command
+\overrideIEEEmargins
+% See the \addtolength command later in the file to balance the column lengths
+% on the last page of the document
+
+
+
+% The following packages can be found on http:\\www.ctan.org
+%\usepackage{graphics} % for pdf, bitmapped graphics files
+%\usepackage{epsfig} % for postscript graphics files
+%\usepackage{mathptmx} % assumes new font selection scheme installed
+%\usepackage{times} % assumes new font selection scheme installed
+%\usepackage{amsmath} % assumes amsmath package installed
+%\usepackage{amssymb}  % assumes amsmath package installed
+
+\title{\LARGE \bf
+Sistema de Localiza\c{c}\~ao de Pessoas Desaparecidas. 
+}
+
+%\author{ \parbox{3 in}{\centering Huibert Kwakernaak*
+%         \thanks{*Use the $\backslash$thanks command to put information here}\\
+%         Faculty of Electrical Engineering, Mathematics and Computer Science\\
+%         University of Twente\\
+%         7500 AE Enschede, The Netherlands\\
+%         {\tt\small h.kwakernaak@autsubmit.com}}
+%         \hspace*{ 0.5 in}
+%         \parbox{3 in}{ \centering Pradeep Misra**
+%         \thanks{**The footnote marks may be inserted manually}\\
+%        Department of Electrical Engineering \\
+%         Wright State University\\
+%         Dayton, OH 45435, USA\\
+%         {\tt\small pmisra@cs.wright.edu}}
+%}
+
+\author{Esdras Fragoso da Silva Neto, Fabricio Jos\'e de Sousa
+\thanks{Universidade Federal do Piau\'i}% <-this % stops a space
+\thanks{ Bacharelado em Sistemas de Informa\c{c}\~ao,
+  {\tt\small Disciplina de Sistemas Distribu\'idos }}%
+}
+
+
+\begin{document}
+
+
+
+\maketitle
+\thispagestyle{empty}
+\pagestyle{empty}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{abstract}
+
+Este documento descreve um Sistema Distribu\'ido que tem como objetivo principal localizar pessoas desaparecidas por meio de um algoritmo de reconhecimento facial que utiliza um  circuito de c\^ameras formado a partir dos muitos sistemas de vigil\^ancia  independentes e particulares que quiserem contribuir com essa causa. Bastando para isto instalar a API que foi desenvolvida por este projeto.  
+
+API que foi desenvolvida por este projeto \'e capaz de transforma qualquer sistema de vigil\^ancia em um terminal de reconhecimento conectado ao middleware do sistema de busca. 
+
+Foi utilizado como middleware do sistema o Dropbox que acumular\'a os arquivos necess\'ario ao funcionamento da aplica\c{c}\~ao. Atrav\'es do mesmo \'e feita a comunicação entre servidores e terminais. 
+
+Os servidores trabalham em um loop infinito verificando se existe algum arquivo no middleware referente a pessoas localizadas. Quando um arquivo \'e localizado o servidor envia um e-mail com as informa\c{c}\~oes do arquivo para a pessoa ou \'org\~ao que solicitou a procura do individuo localizado. Posteriormente o arquivo \'e apagado.
+
+
+\end{abstract}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{INTRODU\c{C}\~AO}
+
+O F\'orum Brasileiro de Segurança P\'ublica divulgou que nos \'ultimos 10 anos o Brasil tem registrado altos n\'umeros de desaparecimentos, contabilizando 693 mil casos no per\'iodo.  S\'o no ano de 2016 foram registrados mais de 70 mil casos. Porem esse cen\'ario pode ser mais grave, visto que, nem todos os desaparecimentos s\~ao notificados. 
+
+Em vista disso, o Minist\'erio P\'ublico do Estado do Rio de Janeiro e o Conselho Nacional do Minist\'erio P\'ublico (CNMP) assinaram um acordo de coopera\c{c}\~ao t\'ecnica para a implanta\c{c}\~ao do Sistema Nacional de Localiza\c{c}\~ao e Identifica{c}\~ao de Desaparecidos (Sinalid).  Al\'em de S\~ao Paulo e Rio de Janeiro, esse projeto existe no Par\'a, no Amazonas e na Bahia, outros estados vem mostrando interesse em aderir ao programa.
+
+Compreendendo a urg\^encia de um Sistema no Brasil para ajudar a amenizar esse problema, este projeto trata da cria\c{c}\~ao de um software distribu\'ido que conecte qualquer sistema de vigil\^ancia ao arquivo classificadorLBPH.yml armazenado em nuvem. Esse arquivo \'e gerado por um algoritmo de reconhecimento facial que analisa o banco de fotos dos indiv\'iduos procurados. Ap\'os realizar essa analise o algoritmo \'e treinado para reconhecer aquelas pessoas por meio do arquivo classificadorLBPH.yml. Desta forma todo terminal que tem acesso ao arquivo pode reconhecer qualquer um dos procurados. 
+
+Quando um dos indiv\'iduos procurados \'e identificado por um dos terminais de busca, \'e enviado para a pasta localizados uma foto do individuo e uma mensagem com hora e local onde o sujeito foi visto. Os servidores que est\~ao em constante loop verificando se existem arquivos na pasta localizados, v\~ao detectar a presen\c{c}a dos arquivos e os enviar para o e-mail da parte interessada no paradeiro do indiv\'iduo detectado.
+
+\section{DROPBOX}
+No centro da aplica\c{c}\~ao entre os terminais e os servidores existe uma nuvem que concentra todos os arquivos necess\'arios a operabilidade do sistema. Essa nuvem funciona como middleware, agindo como intermediador entre os servidores e os terminais. 
+
+O Dropbox foi escolhido para ser a nuvem do sistema por fornece uma API com boa Interoperabilidade com outros sistemas, al\'em de fornece um toquem de segurança que garante m\'ultiplos acessos aos arquivos com total seguran\c{c}a, permitindo alta escalabilidade ao sistema como um todo.
+
+\subsection{Middleware}
+A fun\c{c}\~ao de um  middleware \'e agir como intermedi\'ario entre aplica\c{c}\~oes em um sistema, comunicando diversos processos. \'E justamente est\'a fun\c{c}\~ao que desempenha o Dropbox que recebe dos terminais de busca fotos e mensagens sobre as pessoas localizadas, depois as entrega aos servidores, que por sua vez as envia para os e-mails dos interessados no paradeiro dos ditos procurados.  
+
+\section{REQUISITOS DO SISTEMA}
+Essa se\c{c}\~ao deste documento trata dos requisitos de sistemas distribu\'idos abordados por este projeto, ou seja, as fun\c{c}\~oes e caracter\'isticas do sistema que comungam com os requisitos e atributos que deve possu\'i um bom sistema distribu\'ido, de acordo com o que foi trabalhado na disciplina.  Destas caracter\'isticas destacaremos cinco que est\~ao presentes no sistema de localiza\c{c}\~ao de pessoas por meio do reconhecimento facial.    
+
+\subsection{Seguran\c{c}a} A seguran\c{c}a do sistema \'e proporcionada pelo Dropbox que por meio de um toquem, controla o acesso a todos os arquivos necess\'arios para o funcionamento dos terminais e servidores. Todo o gerenciamento de seguran\c{c}a \'e feito pelas bibliotecas do Dropbox que fornecem informa\c{c}\~oes para as partes inerentes a tal informa\c{c}\~ao.   
+
+\subsection{Interoperabilidade}
+
+A utiliza\c{c}\~ao do Dropbox como middleware proporciona grande interoperabilidade ao sistema, permitindo que os terminais e servidores se comuniquem com perif\'ericos de tecnologias diferente. A comunica\c{c}\~ao \'e feita por arquivos concentrados no middleware permitindo, por exemplo: que um terminal em Python venha a se comunicar com um servidor web desenvolvido em PHP. 
+
+A API do presente projeto, foi desenvolvida em Java, mas n\~ao impede que terminais e servidores desenvolvidos em outra linguagem se comuniquem e passem a operar dentro do sistema.     
+
+\subsection{Escalabilidade}
+N\~ao  existe interfer\^encia no funcionamento do sistema quando ocorrer inclus\~ao ou exclus\~ao de novos terminais ou servidores. 
+
+\subsection{Transpar\^encia de Localiza\c{c}\~ao}
+A API do sistema vai funcionar para os terminais como se todos os processos ocorressem localmente. A localiza\c{c}\~ao de servidores e terminais s\~ao protegidas.
+
+\subsection{Transpar\^encia de Acesso}
+Os terminais estar\~ao funcionando em segundo plano, onde vai ser ocultado o modo como \'e feito o reconhecimento das pessoas desaparecidas.
+
+\section{TERMINAIS}
+Os terminais de busca como j\'a citado acima s\~ao formados por qualquer sistema de c\^ameras de vigil\^ancia dispon\'iveis para ficar a espreita esperando que algu\'em procurado seja detectado. Bastando para isso executar a API Java de busca.  
+
+O funcionamento dos terminais ocorre da seguinte forma, ao ser executado ele verifica se existe um arquivo config.txt, se n\~ao existir \'e acionado a fun\c{c}\~ao cadastro do terminal, onde \'e solicitado do usu\'ario o endere\c{c}o do local onde fica as c\^ameras e o CPF do mesmo. Posteriomente, as informa\c{c}\~oes s\~ao salvas no arquivo config.txt. Quando o sistema reiniciar ele n\~ao solicitar\'a mais esse cadastro. Essa solicita\c{c}\~ao s\'o ser\'a realizada novamente se por algum motivo o arquivo venha a ser apagado.  Quando j\'a existe o arquivo config.txt o sistema chama a fun\c{c}\~ao baixar que faz download do arquivo data.txt, este arquivo contem a data e hora da ultima atualiza\c{c}\~ao dos arquivos gerados pelo algoritmo de reconhecimento facial, que devem ser atualizados sempre que um novo procurado \'e adicionado ao sistema. Ap\'os baixar o arquivo \'e verificado a data do arquivo com a data do ultimo arquivo data.txt baixado, se as informa\c{c}\~oes forem diferente o sistema requisita do Dropbox os classificadorLBPH.yml e haarcascade-frontalface-alt.xml necess\'arios a opera\c{c}\~ao do algoritmo de reconhecimento facial. No caso se data for igual a fun\c{c}\~ao de reconhecimento come\c{c}a a operar normalmente.
+
+Depois de comprida todas as formalidades citadas acima a fun\c{c}\~ao reconhecimento \'e executada dentro de um loop que tem como condi\c{c}\~ao de parada a intensifica\c{c}\~ao de alguma pessoa procurada. No memento que ocorre essa identifica\c{c}\~ao a fun\c{c}\~ao imwrite captura uma imagem da face do sujeito e a armazena na pasta localizado, chamando a fun\c{c}\~ao enviar que recebe como par\^ametro o id do indiv\'iduo reconhecido e o n\'ivel de confian\c{c}a de que a pessoa detectada seja realmente quem o algoritmo afirma ser. 
+
+A fun\c{c}\~ao enviar requisita as informa\c{c}\~oes do arquivo config.txt sobre o endere\c{c}o do local onde se encontra as c\^ameras, depois salva as informac{c}\~oes em um arquivo com o id do indiv\'iduo e o n\'ivel de confianc{c}a.  Esse arquivo\'e enviado para a pasta localizados no Dropbox junto com a foto do rosto do indiv\'iduo.  Depois a fun\c{c}\~ao reconhecimento \'e chamada novamente e o loop reinicia at\'e ser interrompido novamente pela identifica\c{c}\~ao de algum indiv\'iduo.
+
+\section{SERVIDOR}
+O servidor executa um loop infinito verificando se existe arquivos na pasta localizados quando constatado a exist\^encia de algum arquivo, imediatamente \'e extra\'ido o id do sujeito identificado, depois solicita da pasta de procurados o arquivo que tem como nome o id do procurado, nesse arquivo cont\^em o endere\c{c}o de e-mail da pessoa ou \'org\~ao que requisitou a busca do individuo ao sistema. Ap\'os conseguir o endere\c{c}o de e-mail o servidor envia para o respons\'avel a mensagem contida no arquivo que foi enviado pelo terminal de busca e a foto tirada pela c\^amera do terminal. A mensagem tem o endere\c{c}o do local onde ele foi visto, juntamente com a data e hora dessa identifica\c{c}\~ao. A foto servir\'a para que possam verificar se trata-se realmente da pessoa procurada.  
+
+Quando o servidor termina de enviar a mensagem para o endere\c{c}o de e-mail do solicitante da busca, o arquivo da mensagem e a foto s\~ao apagadas da nuvem.
+
+Justamente por utilizar o Dropbox como concentrador de arquivo torna poss\'ivel v\'arios servidores poderem ser utilizados no servi\c{c}o. Isso ocorre devido ao fato do Dropbox concentrar todos esses arquivos e nenhum outro perif\'erico precisa se enxergar e somente possuir acesso ao Dropbox para est\'a apto a realizar as fun\c{c}\~oes de servidor. Quando a tarefa é concluida os arquivos s\~ao exclu\'idos para evitar que o requerente da busca receba mais e-mails do que o necess\'ario. O mesmo ocorre com os terminais, para eles operarem s\'o precisam de acesso ao concentrador de arquivos.  
+
+\section{CONCLUS\~AO}
+
+No decorrer deste projeto foi desenvolvido uma aplica\c{c}\~ao que traz seguran\c{c}a a seus usu\'arios, pois suas informa\c{c}\~ões s\~ao protegidas por um toquem de segurança fornecido pelo Dropbox. A caracter\'istica que mais chama aten\c{c}\~ao \'e sua interoperabilidade, ou seja, a capacidade de aplica\c{c}\~oes de diferentes tecnologias se comunicarem, interagirem e trabalharem dentro da mesma organiza\c{c}\~ao sem nenhuma esp\'ecie de conflito. Outra caracter\'istica forte desta aplicação \'e a escalabilidade, onde terminais e servidores s\~ao adicionados e removidos, sem atrapalhar em nada o funcionamento do sistema como o todo. A efici\^encia do middleware permite que a quantidade de terminais ou servidores n\~ao afetem no desempenho da aplica\c{c}\~ao.  Al\'em destas caracter\'isticas ainda tem a transpar\^encia de acesso e localiza\c{c}\~ao.   
+
+
+
+\addtolength{\textheight}{-12cm}   % This command serves to balance the column lengths
+                                  % on the last page of the document manually. It shortens
+                                  % the textheight of the last page by a suitable amount.
+                                  % This command does not take effect until the next page
+                                  % so it should come on the page before the last. Make
+                                  % sure that you do not shorten the textheight too much.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\end{document}
